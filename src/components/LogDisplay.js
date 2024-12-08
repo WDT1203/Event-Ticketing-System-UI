@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { getLogs } from "../services/api";
+import { getLogs } from "../services/api"; // Ensure this is the correct API function
 
 const LogDisplay = () => {
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState([]); // Use an array to store the logs
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const fetchLogs = async () => {
+    try {
+      setLoading(true);
+      const data = await getLogs(); // Fetch the logs
+      setLogs(data); // Set the logs directly (assuming data is an array)
+    } catch (error) {
+      setError("Error fetching logs");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const data = await getLogs();
-        setLogs(data); // Assuming API returns an array of logs
-      } catch (error) {
-        console.error("Failed to fetch logs:", error);
-      }
-    };
-
     fetchLogs();
-  }, []);
+  }, []); // Fetch logs only once when the component mounts
 
   return (
     <div>
-      <h3>System Logs</h3>
-      <ul>
-        {logs.map((log, index) => (
-          <li key={index}>{log.message}</li>
-        ))}
-      </ul>
+      <h2>Logs:</h2>
+      {loading ? (
+        <p>Loading logs...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <div>
+          {logs && logs.length > 0 ? (
+            logs.map((log, index) => (
+              <div key={index}>
+                {/* Render only the message from the log object */}
+                <p>{log.msg}</p>
+              </div>
+            ))
+          ) : (
+            <p>No logs available.</p>
+          )}
+        </div>
+      )}
+      <button onClick={fetchLogs}>Refresh Logs</button>
     </div>
   );
 };
