@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { startSimulation } from "../services/api"; // Assuming this function makes the API call
+import { startSimulation, stopSimulation } from "../services/api"; // Import both functions
+import styles from "../style/ConfigForm.module.css"; // Import the CSS module
 
 const ConfigForm = () => {
   const [totalTickets, setTotalTickets] = useState("");
@@ -8,8 +9,8 @@ const ConfigForm = () => {
   const [maxTicketCapacity, setMaxTicketCapacity] = useState("");
   const [status, setStatus] = useState("");
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  // Handle form submission for starting the simulation
+  const handleStart = async (e) => {
     e.preventDefault();
 
     // Create configuration object
@@ -21,7 +22,7 @@ const ConfigForm = () => {
     };
 
     try {
-      const response = await startSimulation(config); // API call
+      const response = await startSimulation(config); // API call to start the simulation
       console.log(response); // Check the response here
       setStatus(response);
     } catch (error) {
@@ -30,11 +31,22 @@ const ConfigForm = () => {
     }
   };
 
+  // Handle stopping the simulation
+  const handleStop = async () => {
+    try {
+      const response = await stopSimulation(); // API call to stop the simulation
+      alert(response.message); // Notify the user
+    } catch (error) {
+      console.error("Failed to stop simulation:", error);
+      alert("Error stopping the simulation");
+    }
+  };
+
   return (
-    <div>
+    <div className={styles.container}>
       <h3>System Configuration</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleStart}>
+        <div className={styles["form-group"]}>
           <label>Total Tickets:</label>
           <input
             type="number"
@@ -43,7 +55,7 @@ const ConfigForm = () => {
             required
           />
         </div>
-        <div>
+        <div className={styles["form-group"]}>
           <label>Ticket Release Rate (seconds):</label>
           <input
             type="number"
@@ -52,7 +64,7 @@ const ConfigForm = () => {
             required
           />
         </div>
-        <div>
+        <div className={styles["form-group"]}>
           <label>Customer Retrieval Rate (milliseconds):</label>
           <input
             type="number"
@@ -61,7 +73,7 @@ const ConfigForm = () => {
             required
           />
         </div>
-        <div>
+        <div className={styles["form-group"]}>
           <label>Max Ticket Capacity:</label>
           <input
             type="number"
@@ -70,11 +82,14 @@ const ConfigForm = () => {
             required
           />
         </div>
-        <div>
+        <div className={styles["form-group"]}>
           <button type="submit">Start Simulation</button>
         </div>
       </form>
-      {status && <div>{status}</div>} {/* Display status message */}
+      <div className={styles["form-group"]}>
+        <button onClick={handleStop}>Stop Simulation</button>
+      </div>
+      {status && <div className={styles["status-message"]}>{status}</div>}
     </div>
   );
 };

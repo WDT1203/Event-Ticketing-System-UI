@@ -25,6 +25,9 @@ const LogDisplay = () => {
   return (
     <div>
       <h2>Logs:</h2>
+      <button onClick={fetchLogs} disabled={loading}>
+        {loading ? "Refreshing..." : "Refresh Logs"}
+      </button>
       {loading ? (
         <p>Loading logs...</p>
       ) : error ? (
@@ -34,8 +37,14 @@ const LogDisplay = () => {
           {logs && logs.length > 0 ? (
             logs.map((log, index) => (
               <div key={index}>
-                {/* Render only the message from the log object */}
-                <p>{log.msg}</p>
+                {/* Render the timestamp and message from the log object */}
+                <p>
+                  <strong>Timestamp:</strong> {log["@timestamp"]}
+                </p>
+                <p>
+                  <strong>Message:</strong> {log.message}
+                </p>
+                <hr />
               </div>
             ))
           ) : (
@@ -43,7 +52,6 @@ const LogDisplay = () => {
           )}
         </div>
       )}
-      <button onClick={fetchLogs}>Refresh Logs</button>
     </div>
   );
 };

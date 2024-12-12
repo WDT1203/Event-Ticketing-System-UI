@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { getTicketPoolStatus } from "../services/api";
+import styles from "../style/ConfigForm.module.css"; // Use the same CSS module
 
-const TicketDisplay = () => {
+const TktDisplay = () => {
   const [status, setStatus] = useState("No data yet");
   const [error, setError] = useState(null);
 
@@ -18,7 +19,7 @@ const TicketDisplay = () => {
   };
 
   return (
-    <div>
+    <div className={styles.ticketCard}>
       <h2>Ticket Pool Status</h2>
       <p>Tickets available: {error ? error : status}</p>
       <button onClick={fetchStatus}>Get Available Tickets</button>
@@ -26,4 +27,4 @@ const TicketDisplay = () => {
   );
 };
 
-export default TicketDisplay;
+export default TktDisplay;
